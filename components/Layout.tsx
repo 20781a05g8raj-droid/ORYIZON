@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Menu, X, Leaf, Minus, Plus, Instagram, Facebook, Twitter } from './Icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { ShoppingBag, Menu, X, Leaf, Minus, Plus, Instagram, Facebook, Twitter, Sparkles } from './Icons';
 import { CartItem, PageView } from '../types';
+import { generateWellnessAdvice } from '../services/geminiService';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,99 @@ const BrandLogo = ({ isFooter = false }: { isFooter?: boolean }) => (
     />
   </div>
 );
+
+const WellnessAssistant = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [chat, setChat] = useState<{ role: 'user' | 'ai', text: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [chat]);
+
+  const handleSend = async () => {
+    if (!message.trim()) return;
+    const userMsg = message;
+    setMessage('');
+    setChat(prev => [...prev, { role: 'user', text: userMsg }]);
+    setLoading(true);
+
+    const advice = await generateWellnessAdvice(userMsg);
+    setChat(prev => [...prev, { role: 'ai', text: advice }]);
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed bottom-8 right-8 z-[60]">
+      {isOpen ? (
+        <div className="bg-white w-[350px] md:w-[400px] h-[500px] rounded-[2.5rem] shadow-3xl border border-oryzon-accent/30 flex flex-col overflow-hidden animate-slide-up">
+          <div className="bg-oryzon-dark p-6 text-white flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-oryzon-green rounded-full flex items-center justify-center">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-serif font-bold">Wellness AI</h4>
+                <p className="text-[10px] uppercase tracking-widest text-oryzon-accent/70">Oryizon Specialist</p>
+              </div>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform"><X className="w-5 h-5" /></button>
+          </div>
+          
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 hide-scrollbar bg-oryzon-light/30">
+            {chat.length === 0 && (
+              <div className="text-center py-10">
+                <Leaf className="w-12 h-12 text-oryzon-green/20 mx-auto mb-4" />
+                <p className="text-oryzon-dark/60 font-serif italic text-lg px-4">"How can I help you harness the power of Moringa today?"</p>
+              </div>
+            )}
+            {chat.map((c, i) => (
+              <div key={i} className={`flex ${c.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed ${c.role === 'user' ? 'bg-oryzon-green text-white rounded-tr-none' : 'bg-white text-oryzon-dark shadow-sm border border-gray-100 rounded-tl-none'}`}>
+                  {c.text}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="flex justify-start">
+                <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 rounded-tl-none flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-oryzon-green/40 rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-oryzon-green/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                  <span className="w-1.5 h-1.5 bg-oryzon-green/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="p-4 bg-white border-t border-gray-100">
+            <div className="flex gap-2 bg-oryzon-light rounded-full px-4 py-1 border border-gray-200">
+              <input 
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Ask about Moringa benefits..." 
+                className="flex-1 bg-transparent py-3 outline-none text-sm"
+              />
+              <button onClick={handleSend} className="text-oryzon-green hover:scale-110 transition-transform">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="w-16 h-16 bg-oryzon-dark text-white rounded-full flex items-center justify-center shadow-3xl hover:bg-oryzon-green hover:scale-110 transition-all group"
+        >
+          <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-oryzon-accent rounded-full animate-ping"></div>
+        </button>
+      )}
+    </div>
+  );
+};
 
 const Layout: React.FC<LayoutProps> = ({ children, cart, setCart, currentView, onChangeView }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -103,6 +197,8 @@ const Layout: React.FC<LayoutProps> = ({ children, cart, setCart, currentView, o
           </div>
         </div>
       </nav>
+
+      <WellnessAssistant />
 
       {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 z-50 bg-white/95 backdrop-blur-xl transition-all duration-500 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
