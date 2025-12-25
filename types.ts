@@ -1,4 +1,5 @@
 
+
 export interface Product {
   id: string;
   name: string;
@@ -75,4 +76,5 @@ export interface ContactMessage {
   created_at: string;
 }
 
-export type PageView = 'HOME' | 'SHOP' | 'PRODUCT' | 'ABOUT' | 'CONTACT' | 'BLOG' | 'CART' | 'CHECKOUT' | 'BENEFITS' | 'FAQ' | 'PRIVACY' | 'TERMS' | 'ADMIN' | 'ARTICLE' | 'TRACK_ORDER';
+// Fixed PageView by adding 'ORDER_SUCCESS' to the union type
+export type PageView = 'HOME' | 'SHOP' | 'PRODUCT' | 'ABOUT' | 'CONTACT' | 'BLOG' | 'CART' | 'CHECKOUT' | 'BENEFITS' | 'FAQ' | 'PRIVACY' | 'TERMS' | 'ADMIN' | 'ARTICLE' | 'TRACK_ORDER' | 'ORDER_SUCCESS';
