@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from './components/Layout';
 import { PRODUCTS as DEFAULT_PRODUCTS, BLOG_POSTS as DEFAULT_BLOGS } from './constants';
-import { Product, CartItem, PageView, Review, BlogPost, ContactInfo, Order } from './types';
-import { ShoppingBag, Star, ArrowRight, Sparkles, Leaf, ChevronDown, X, Plus, Minus } from './components/Icons';
+import { Product, CartItem, PageView, BlogPost, Order } from './types';
+import { ArrowRight, Sparkles, Leaf } from './components/Icons';
 import { supabase } from './lib/supabaseClient';
-import AdminDashboard from './components/AdminDashboard';
 
 // -- Animation Helper -- //
 
@@ -233,8 +232,8 @@ const App: React.FC = () => {
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [activeBlogPost, setActiveBlogPost] = useState<BlogPost | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
-  const [lastOrderId, setLastOrderId] = useState<string>('');
+  const [, setIsOrderPlaced] = useState(false);
+  const [, setLastOrderId] = useState<string>('');
   const [activeProductImage, setActiveProductImage] = useState<string>('');
   
   const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
@@ -374,7 +373,16 @@ const App: React.FC = () => {
           </div>
         </div>
       ) : null;
-      case 'CHECKOUT': return <CheckoutView cart={cart} onCancel={() => setView('SHOP')} onDone={(id) => { setLastOrderId(id); setIsOrderPlaced(true); setCart([]); }} />;
+      case 'CHECKOUT': 
+        return <CheckoutView 
+          cart={cart} 
+          onCancel={() => setView('SHOP')} 
+          onDone={(id: string) => { 
+            setLastOrderId(id); 
+            setIsOrderPlaced(true); 
+            setCart([]); 
+          }} 
+        />;
       default: return null;
     }
   };
@@ -452,8 +460,14 @@ const ProductCard: React.FC<{ product: Product; onClick: () => void }> = ({ prod
   </div>
 );
 
-const CheckoutView = ({ cart, onCancel, onDone }: any) => {
-  const subtotal = cart.reduce((acc: any, i: any) => acc + (i.price * i.quantity), 0);
+interface CheckoutViewProps {
+  cart: CartItem[];
+  onCancel: () => void;
+  onDone: (id: string) => void;
+}
+
+const CheckoutView: React.FC<CheckoutViewProps> = ({ cart, onCancel, onDone }) => {
+  const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
   return (
     <div className="pt-64 pb-32 bg-oryzon-light min-h-screen">
       <div className="container mx-auto px-6 max-w-5xl text-center">
