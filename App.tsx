@@ -72,7 +72,11 @@ const BlogSection = ({ blogs, onRead }: { blogs: BlogPost[], onRead: (p: BlogPos
             <h3 className="text-3xl font-serif font-bold text-oryzon-dark mb-6 group-hover:text-oryzon-green transition-colors leading-tight" onClick={() => onRead(post)}>{post.title}</h3>
             <p className="text-gray-500 text-base leading-relaxed mb-10 line-clamp-2">{post.excerpt}</p>
             <button 
-              onClick={(e) => { e.stopPropagation(); onRead(post); }}
+              onClick={(e) => { 
+                e.preventDefault();
+                e.stopPropagation(); 
+                onRead(post); 
+              }}
               className="flex items-center gap-3 text-sm font-bold text-oryzon-dark border-b-2 border-oryzon-accent pb-2 group-hover:gap-6 group-hover:text-oryzon-green group-hover:border-oryzon-green transition-all uppercase tracking-widest"
             >
               Read Full Journal <ArrowRight className="w-4 h-4" />
