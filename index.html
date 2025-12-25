@@ -3,14 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ORYIZON | Pure Moringa</title>
+    <title>ORYIZON | Pure Moringa leaf powder & Superfoods</title>
     
-    <!-- Process shim for Netlify environment variables -->
+    <!-- Process shim for environment variables -->
     <script>
-      window.process = { env: { API_KEY: "" } };
+      // Ensures the app doesn't crash if process.env is accessed in the browser
+      window.process = window.process || { env: { API_KEY: "" } };
     </script>
 
-    <!-- Babel for Netlify environment compatibility -->
+    <!-- Babel for browser-side TSX transformation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -83,7 +84,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Load the entry point -->
     <script type="text/babel" data-type="module" src="index.tsx"></script>
   </body>
 </html>
