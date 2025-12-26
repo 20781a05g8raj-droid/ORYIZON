@@ -630,7 +630,7 @@ const HeroSection = ({ onShopNow }: { onShopNow: () => void }) => {
       </div>
       <div className="container mx-auto px-6 relative z-20 pt-24 max-w-5xl text-left">
           <Reveal>
-            <span className="inline-block backdrop-blur-xl bg-white/10 border border-white/20 text-white/90 text-[11px] font-black tracking-[0.4em] px-8 py-4 rounded-full uppercase mb-12 shadow-2xl">Earth's Premium Superfood Powder</span>
+            <span className="inline-block backdrop-blur-xl bg-white/10 border border-white/20 text-white/90 text-[11px] font-black tracking-[0.4em] px-8 py-4 rounded-full uppercase mb-12 shadow-2xl">Natural Moringa Leaf</span>
             <h1 className="text-8xl md:text-[10rem] font-serif font-bold text-white leading-[0.85] mb-12 tracking-tighter">Nature's <br/><span className="text-oryzon-accent italic">Miracle Leaf.</span></h1>
             <p className="text-2xl md:text-3xl text-gray-200 mb-16 leading-relaxed font-light max-w-3xl">
               Experience the ultimate <span className="text-oryzon-accent font-semibold italic underline underline-offset-8 decoration-oryzon-accent/30">immunity booster powder</span>. 
